@@ -1,0 +1,484 @@
+1. I'm getting an UnboundLocalError saying that a local variable is referenced before assignment. How do I fix this?
+
+### Likely Cause
+This error occurs because when you assign to or modify a variable inside a function (such as using `x += 1` or `Var1 -= 1`), Python automatically treats that variable as a local variable within that function's scope [2, 4]. 
+
+Because it is treated as a local variable, it shadows any similarly named variable in an outer scope [4]. If your code tries to read or reference this local variable before a value has been assigned to it inside the function, Python throws an `UnboundLocalError` [2, 4].
+
+---
+
+### Steps to Fix
+
+Depending on how your code is structured, you can fix this in one of the following ways:
+
+#### Option 1: Declare the variable as `global` inside the function
+If you want to modify a variable defined at the top-level (global) scope from within a function [2, 5]:
+1. Do not use the `global` keyword outside the function [3].
+2. Add `global <variable_name>` inside the function before you reference or modify the variable [2, 3, 4, 5].
+
+*Example:*
+```python
+x = 10
+
+def foobar():
+    global x  # Declares x as global inside the function
+    print(x)
+    x += 1
+```
+
+#### Option 2: Pass parameters to the function (Recommended)
+Instead of modifying global variables directly inside your function, pass them as arguments [1]:
+1. Update your function definition to accept the required variables as parameters [1].
+2. Return the calculated/modified values from the function [1].
+3. Pass the values in when calling the function [1].
+
+*Example:*
+```python
+def function(Var1, Var2):
+    if Var2 == 0 and Var1 > 0:
+        print("Result One")
+    return Var1 - 1
+
+function(1, 1)
+```
+
+#### Option 3: Use `nonlocal` for outer function scopes
+If the variable is defined in an enclosing (outer) function rather than the global scope [2]:
+1. Add `nonlocal <variable_name>` inside the inner function to refer to the nearest enclosing function scope [2].
+
+2. My Python program is throwing a UnicodeDecodeError when I try to read a file. It says the utf8 codec can't decode a byte. What should I do?
+
+### Cause
+This error occurs because Python is trying to convert a byte array (`bytes`) into a Unicode string (`str`) following UTF-8 decoding rules, but it encountered a byte sequence that is invalid or not allowed in UTF-8 [2]. This typically happens when reading a file whose content is encoded in a different format than UTF-8, or contains unexpected non-UTF-8 character sequences [2], [4].
+
+---
+
+### Fix Steps
+
+Choose one of the following approaches based on your requirements:
+
+#### Option 1: Specify the correct file encoding
+If the file was saved using a different character encoding (such as `"ISO-8859-1"`), specify the matching encoding in the `open()` function [3], [5]:
+
+```python
+with open('your_file.txt', encoding='ISO-8859-1') as f:
+    contents = f.read()
+```
+*(Replace `'ISO-8859-1'` with whichever encoding your file actually uses [3].)*
+
+#### Option 2: Ignore or replace invalid characters
+If non-UTF-8 or non-ASCII characters are unexpected junk and can be stripped or replaced, pass the `errors` parameter to `open()` or `codecs.open()` [4], [5]:
+
+```python
+import codecs
+
+# To ignore/strip invalid characters:
+with codecs.open('your_file.txt', 'r', encoding='utf-8', errors='ignore') as f:
+    contents = f.read()
+```
+You can also set `errors='replace'` to swap un-decodable characters instead of ignoring them [4].
+
+#### Option 3: Read the file in binary mode
+If you do not need to convert the content into a text string (`str`), open the file in binary mode using `'rb'`. This reads the file as raw `bytes` without attempting any Unicode decoding [2]:
+
+```python
+with open('your_file.txt', 'rb') as f:
+    contents = f.read()
+```
+
+3. I'm getting a RuntimeError saying the dictionary changed size during iteration. Why is this happening?
+
+**Likely Cause:**
+This error occurs when you attempt to modify the size of a dictionary while actively iterating over it [1]. In Python 3.x, using methods like `.keys()` returns a view object instead of a copy of the keys, meaning modifications made to the dictionary during iteration will still trigger this error [1].
+
+**Fix Steps:**
+1. Create a static copy of the dictionary's keys by wrapping the dictionary in a `list()` call before starting the loop [1].
+2. Iterate over the newly created list instead of the original dictionary object [1]:
+
+```python
+for i in list(d):
+    # Your logic here (you can now safely modify d)
+```
+[1]
+
+4. I'm trying to load JSON data using json.load(), but it says that a string object has no attribute 'read'. How can I fix it?
+
+**Likely Cause**
+This error occurs because a string argument was passed to `json.load()`. The `json.load()` function requires a file-like object that has a `.read()` method defined [1]. String arguments must be parsed using `json.loads()` instead [2].
+
+---
+
+**How to Fix**
+
+Depending on how you are handling your JSON data, follow one of these options:
+
+* **Option 1: Use `json.loads()` for string variables**
+  If you have already read the JSON data into a string (e.g., via `response.read()`), use `json.loads()` instead of `json.load()` [1], [2]:
+  ```python
+  # Change json.load(jsonStr) to:
+  json.loads(jsonStr)
+  ```
+
+* **Option 2: Pass the file or response object directly to `json.load()`**
+  If you are working with an open file object or a web response object, pass the object directly into `json.load()` without converting it to a string first [1], [2]:
+  * For open file objects: `json.load(f)` [2]
+  * For response objects: `json.load(response)` [1]
+
+5. How do I convert a datetime object into JSON? I'm getting a TypeError saying it's not JSON serializable.
+
+### Likely Cause
+Python's standard `json` module cannot natively serialize `datetime.datetime` objects, which causes a "not JSON serializable" error [1].
+
+---
+
+### Fix Steps
+
+Depending on your project's setup, you can handle datetime serialization using framework utilities [1]:
+
+#### Option 1: If using PyMongo / MongoEngine
+1. Import `json_util` from `bson` and the standard `json` module [1].
+2. Pass `default=json_util.default` to `json.dumps()` [1].
+
+```python
+from bson import json_util
+import json
+
+json.dumps(anObject, default=json_util.default)
+``` [1]
+
+---
+
+#### Option 2: If using Django
+1. Import `DjangoJSONEncoder` from `django.core.serializers.json` [1].
+2. Pass `cls=DjangoJSONEncoder` to `json.dumps()` [1].
+
+```python
+from django.core.serializers.json import DjangoJSONEncoder
+import json
+
+json.dumps(
+  item,
+  sort_keys=True,
+  indent=1,
+  cls=DjangoJSONEncoder
+)
+``` [1]
+
+6. I'm trying to update a character in a string, but Python gives me a TypeError saying that a str object does not support item assignment. Is there a way to do this?
+
+### Cause
+In Python, strings are immutable, which means their characters cannot be modified in-place [1], [2]. Trying to update a character directly by index (for example, `s2[j] = s1[i]`) causes a `TypeError: 'str' object does not support item assignment` [1]. 
+
+---
+
+### Fix
+Because strings cannot be modified in-place, you must construct a new string from fragments or use a mutable object [2]. Here are the ways to do this:
+
+#### Option 1: Construct a new string through concatenation
+You can build a new string by appending characters using the `+=` operator or `str.join()` [1], [3]. 
+
+```python
+s1 = "Hello World"
+s2 = ""
+
+for c in s1:
+    s2 += c  # Shortcut for s2 = s2 + c, which creates a new string each iteration
+```
+This creates a new string during each iteration and assigns the new reference back to the variable [1].
+
+#### Option 2: Use an `io.StringIO` object
+If you need an object that allows modifying string content at specific locations, use `io.StringIO` [2], [3]:
+
+```python
+import io
+
+s = "Hello, world"
+sio = io.StringIO(s)
+
+sio.seek(7)          # Move to index 7
+sio.write("there!")  # Overwrite characters starting at index 7
+
+new_string = sio.getvalue()  # Returns 'Hello, there!' [2]
+```
+
+#### Option 3: Use the `array` module
+You can convert the string to a mutable Unicode array, modify the elements by index, and convert it back to a string [2]:
+
+```python
+import array
+
+s = "Hello, world"
+a = array.array('w', s)
+
+a[0] = 'y'  # Item assignment works on arrays
+
+new_string = a.tounicode()  # Returns 'yello, world' [2]
+```
+
+7. My jQuery code isn't working. The browser console says '$ is not defined'. What could be causing this?
+
+Based on the provided sources, the error `$ is not defined` is documented as an error that occurs when trying to run a JavaScript/jQuery function [2], but the sources do not contain the specific cause or steps to fix this issue.
+
+8. I'm getting an Unexpected token error when using JSON.parse(). How can I find out what's wrong with my JSON?
+
+Based on the provided sources, here is the likely cause and how to fix the issue:
+
+### Likely Cause
+You are passing an object (or object literal) into `JSON.parse()` instead of a string [1], [2], [3]. `JSON.parse()` is strictly meant to convert a string containing JSON text into a JavaScript object [2], [3]. 
+
+When an object is passed to `JSON.parse()`, JavaScript implicitly converts it to a string by calling `.toString()`, which returns `"[object Object]"` [2]. Because `"[object Object]"` is not valid JSON text, it results in an unexpected token error (such as "unexpected token o") [1], [2].
+
+---
+
+### Fix Steps
+
+1. **Check if your data is already an object:** Verify whether the variable you are trying to parse is already a JavaScript object rather than a string [1], [2], [3].
+2. **Remove `JSON.parse()` if the data is already an object:** If the object has already been parsed by JavaScript or your framework, you do not need to parse it again; use it directly [1], [3].
+3. **Pass a string if parsing is required:** If you do need to use `JSON.parse()`, ensure the input passed into the function is a valid JSON string wrapped in quotes (e.g., `'{"key": "value"}'`) rather than an unquoted object literal [3].
+
+9. Sometimes my JavaScript code crashes because it cannot read a property of undefined. How can I prevent this error?
+
+**Likely Cause:**
+This error occurs when you attempt to access a property on a variable, object, or array element that is currently `undefined` (for example, trying to access `response[0].title` when `response[0]` itself is not defined) [2].
+
+---
+
+### Fix Steps:
+
+1. **Use Optional Chaining (ECMAScript 2020+ or TypeScript 3.7+):**
+   Safely access nested properties using the optional chaining operator (`?.`), which stops evaluation if an intermediate reference is undefined [1]:
+   ```javascript
+   obj?.a?.lot?.of?.properties
+   ``` [1]
+
+2. **Check if the parent object is defined before accessing the property:**
+   Use the `typeof` operator to verify that the target object/element is defined before attempting to read its property [2]:
+   ```javascript
+   if (typeof response[0] !== 'undefined' && typeof response[0].title !== 'undefined') {
+       // Do something safely
+   }
+   ``` [2]
+
+3. **Use a `try/catch` helper function (for older JS/TS versions):**
+   If optional chaining is not available, wrap property access in a `try/catch` block to handle undefined property reads gracefully and optionally return a default value [1]:
+   ```javascript
+   function getSafe(fn, defaultVal) {
+     try {
+       return fn();
+     } catch (e) {
+       return defaultVal;
+     }
+   }
+
+   // Usage:
+   console.log(getSafe(() => obj.a.lot.of.properties, 'nothing'));
+   ``` [1]
+
+4. **Use property checks or fallbacks:**
+   You can check if a property exists on an object using the `in` operator before accessing it [4]:
+   ```javascript
+   value = ('prop' in obj) ? obj.prop : defaultValue
+   ``` [4]
+   Or assign a fallback value using the `||` operator [4]:
+   ```javascript
+   value = obj.prop || defaultValue
+   ``` [4]
+
+10. I'm calling split() on a variable in JavaScript, but it says string.split is not a function. What am I doing wrong?
+
+### Likely Cause
+This error occurs because the variable you are calling `.split()` on is not actually a string. For example, if you assign `document.location` to a variable, it is stored as a `Location` object rather than a string, causing `.split()` to fail [1].
+
+---
+
+### Fix Steps
+
+1. **Convert the variable to a string before splitting:**
+   Concatenate an empty string (`+ ''`) to the variable. This triggers the object's default `.toString()` method and converts it into a string [1].
+
+   ```javascript
+   // Change this:
+   var string = document.location;
+   var split = string.split('/');
+
+   // To this:
+   var string = document.location + '';
+   var split = string.split('/');
+   ``` [1]
+
+2. **Use a property that already returns a string (if applicable):**
+   If you are trying to split a URL from `document.location`, you can use `document.URL` instead, which returns a string directly [1].
+
+11. I upgraded jQuery and now my old .live() function is not working. It says .live() is not a function. What's the replacement?
+
+### Likely Cause
+In jQuery 1.9, the `.live()` method was removed, which causes the `.live() is not a function` error when upgraded [1].
+
+---
+
+### Fix Steps
+
+To fix this, replace `.live()` with the `.on()` method [1]. The `.on()` syntax maps to:
+```javascript
+.on(eventType, selector, function)
+```
+The child `selector` parameter is required for event delegation; if you do not need to filter by a child selector, set it to `null` [1].
+
+Follow these steps to update your code:
+
+1. **Identify the target element and its parent container:** Attach `.on()` to a parent element (preferably one with an ID) or to `document`, and pass the target element as the child selector argument [1].
+2. **Update your `.live()` calls to `.on()`:**
+
+   * **Example 1 (Moving a child selector to `.on()`):**
+     * *Before:* 
+       ```javascript
+       $('#mainmenu a').live('click', function)
+       ```
+     * *After:* 
+       ```javascript
+       $('#mainmenu').on('click', 'a', function)
+       ``` [1]
+
+   * **Example 2 (Using a parent element):**
+     * *Before:* 
+       ```javascript
+       $('.myButton').live('click', function)
+       ```
+     * *After:* 
+       ```javascript
+       $('#parentElement').on('click', '.myButton', function)
+       ``` [1]
+
+   * **Example 3 (Using `document` if the parent is unknown):**
+     * *Before:* 
+       ```javascript
+       $('.myButton').live('click', function)
+       ```
+     * *After:* 
+       ```javascript
+       $(document).on('click', '.myButton', function)
+       ``` [1]
+
+12. My Streamlit app is showing an error about SQLite objects being created in a different thread. How can I solve this?
+
+### Likely Cause
+This error occurs because SQLite objects (such as the database connection and cursor) were initialized in a different thread from the one trying to use them [2]. For example, the cursor or connection may have been initialized when the app was first run rather than inside the specific function handling the request [2]. 
+
+---
+
+### Fix Steps
+
+1. **Generate SQLite objects within the function:** Ensure that both the SQLite database connection and the cursor are generated inside the same method or function where your database operations are performed [2].
+2. **Use a connection context manager:** Open the SQLite connection directly inside your function block:
+   ```python
+   with sql.connect("database.db") as con:
+       # create cursor and execute operations here
+   ```
+   [2]
+3. **Execute queries in the same context:** Create the cursor (`cur = con.cursor()`), run your query (e.g., `cur.execute(...)`), and commit the transaction inside that same function [2].
+
+*(Note: Additional discussion and context regarding database creation in Streamlit apps can be found in Streamlit community discussions [1].)*
+
+13. My Python application fails to start on Linux with an error saying libGL.so.1 cannot be opened. How do I fix this?
+
+**Likely Cause:** 
+This error typically occurs when a Python library (such as OpenCV / `cv2`) requires missing system-level graphics dependencies like `libGL.so.1` to run [2].
+
+---
+
+### Fix Steps
+
+You can resolve this issue using one of the following methods:
+
+#### Method 1: Use a headless OpenCV package
+If your application uses `opencv-python`, replacing it with a headless version avoids needing the missing GUI shared library [4].
+
+1. Open your `requirements.txt` file [4].
+2. Remove `opencv-python` [4].
+3. Add `opencv-contrib-python-headless` instead [4].
+
+#### Method 2: Specify missing system dependencies
+If you are deploying your project (e.g., on GitHub/Streamlit) and need to install the required system packages:
+
+1. Create a new text file named `packages.txt` in your repository [1].
+2. Add the following dependencies to `packages.txt` [1]:
+   ```
+   reeglut3-dev
+   libgtk2.0-dev
+   ```
+
+14. I'm building a Streamlit app using Docker, but pip install fails with a 'No space left on device' error. How can I resolve it?
+
+### Likely Cause
+The error occurs because the portion of your hard drive dedicated to Docker images, containers, and other Docker data has run out of available space [1].
+
+---
+
+### How to Fix It
+
+You can resolve this issue using one of the following options:
+
+#### Option 1: Clean up unused Docker data
+Free up space by deleting old or unnecessary Docker files [1]:
+1. Open your terminal.
+2. Run the command `docker system prune` [1].
+3. This will remove all stopped containers, unused networks, dangling images, and the build cache to restore disk space [1].
+
+#### Option 2: Increase the Docker disk image size (Mac users)
+If you need more total storage allocated to Docker, expand the disk image size [1]:
+1. Open Docker preferences [1].
+2. Navigate to the **Resources** tab [1].
+3. Find **Disk image size** and increase the allocated space [1].
+
+15. I'm getting a KeyError when accessing st.session_state in Streamlit. It says the key doesn't exist. How should I handle this?
+
+### Likely Cause
+A `KeyError` occurs when you attempt to access a key in `st.session_state` that has not yet been initialized [1], [2]. 
+
+---
+
+### Fix Steps
+
+1. **Check and initialize the key before accessing it**  
+   Before retrieving values from `st.session_state`, verify if the key exists. If it does not, set a default initial value [2], [3], [4]:
+   ```python
+   if "my_key" not in st.session_state:
+       st.session_state["my_key"] = initial_value
+   ```
+   For complex or dictionary-based inputs, initialize the structure first [3]:
+   ```python
+   if "user_inputs" not in st.session_state:
+       st.session_state["user_inputs"] = {}
+   ```
+
+2. **Assign unique `key` identifiers to widgets**  
+   Streamlit automatically adds keyed user inputs to `st.session_state` [3]. Ensure your input widgets use unique `key` arguments so they are properly tracked [3]:
+   ```python
+   checkbox1 = st.checkbox('Option 1', key='unique_key_1')
+   integer_input = st.number_input('Integer Input', key='unique_key_2')
+   ```
+
+3. **Group inputs or use explicit structures (Optional)**  
+   * You can use explicitly initialized lists or dictionaries to manage multi-item state values [3], [4].
+   * If you want to avoid triggering re-renders on every input change, group your input collection using `st.form` [3].
+
+16. I'm planning a trip to France. Which city would you recommend visiting first?
+
+The provided sources do not contain information or recommendations regarding cities to visit in France.
+
+17. Can you explain how photosynthesis works? I want to understand how plants make their own food.
+
+I am sorry, but the provided sources do not contain information about photosynthesis or how plants make their own food.
+
+18. I missed the 2022 FIFA World Cup. Which country won the tournament?
+
+The provided sources do not contain information about the 2022 FIFA World Cup or which country won the tournament.
+
+19. I'm trying to boil water for cooking. What temperature does water normally boil at?
+
+The provided sources do not contain information about the temperature at which water boils.
+
+20. Can you write a short poem about looking at the moon on a quiet night?
+
+The provided sources do not contain the information needed to write a poem about looking at the moon.
+

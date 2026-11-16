@@ -1,0 +1,300 @@
+/* ---------- Theme colors ---------- */
+:root {
+    --red: #e63946;
+    --red-dark: #b3202c;
+    --red-soft: rgba(230, 57, 70, 0.15);
+    --card: rgba(26, 26, 31, 0.85);
+    --border: #3a2a2e;
+    --text-muted: #b0a0a4;
+}
+
+/* ---------- Page background ---------- */
+.stApp,
+div[data-testid="stAppViewContainer"] {
+    background:
+        linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        radial-gradient(circle at 85% 0%, rgba(230, 57, 70, 0.35), transparent 45%),
+        radial-gradient(circle at 0% 100%, rgba(179, 32, 44, 0.25), transparent 45%),
+        linear-gradient(160deg, #1a0a0d 0%, #0b0b0f 60%) !important;
+    background-size: 40px 40px, 40px 40px, auto, auto, auto !important;
+    background-attachment: fixed !important;
+}
+
+header[data-testid="stHeader"] {
+    background: transparent !important;
+}
+
+/* ---------- Scrollbar ---------- */
+::-webkit-scrollbar {
+    width: 8px;
+}
+::-webkit-scrollbar-thumb {
+    background: var(--red-dark);
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: var(--red);
+}
+
+/* ---------- Sidebar ---------- */
+section[data-testid="stSidebar"] {
+    background: linear-gradient(180deg, #1f0b0f, #0d0d11) !important;
+    border-right: 1px solid var(--border);
+}
+
+.sidebar-heading {
+    width: 100%;
+    padding: 5px;
+    margin-bottom: 20px;
+}
+
+.sidebar-heading h1 {
+    color: var(--red);
+    font-size: 2rem !important;
+    transition: letter-spacing 0.3s ease;
+}
+
+.sidebar-heading:hover h1 {
+    letter-spacing: 2px;
+}
+
+.sidebar-heading p {
+    color: var(--text-muted);
+    font-size: small;
+}
+
+/*------------------- Metrics -----------------*/
+
+/* ---------- Metrics heading ---------- */
+.metrics {
+    width: 100%;
+    padding: 8px 14px;
+    margin-bottom: 15px;
+    border-left: 4px solid var(--red);
+    border-radius: 6px;
+    background-color: var(--card);
+    transition: border-left-width 0.2s ease, background-color 0.2s ease;
+}
+
+.metrics:hover {
+    border-left-width: 10px;
+    background-color: rgba(230, 57, 70, 0.12);
+}
+
+.metrics h2 {
+    color: var(--red);
+    font-size: 1.3rem !important;
+    padding: 0;
+    margin: 0;
+}
+
+.metrics p {
+    color: var(--text-muted);
+    font-size: small;
+    margin: 4px 0 0 0;
+}
+
+/* -------------- Metrics Cards -----------------*/
+
+.st-key-metrics {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+}
+
+div[data-testid="stMetric"] {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 12px;
+    transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+}
+
+div[data-testid="stMetric"]:hover {
+    border-color: var(--red);
+    box-shadow: 0 4px 14px var(--red-soft);
+    transform: translateY(-2px);
+}
+
+div[data-testid="stMetric"] label {
+    color: var(--red);
+}
+
+/* ---------- Select boxes ---------- */
+div[data-baseweb="select"] > div {
+    background-color: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+div[data-baseweb="select"] > div:hover {
+    border-color: var(--red);
+}
+
+div[data-baseweb="select"] > div:focus-within {
+    border-color: var(--red);
+    box-shadow: 0 0 0 3px var(--red-soft);
+}
+
+li[role="option"] {
+    transition: background-color 0.15s ease, padding-left 0.15s ease;
+}
+
+li[role="option"]:hover {
+    background-color: var(--red-soft) !important;
+    padding-left: 20px;
+}
+
+/* ---------- Hero header ---------- */
+.Hero-header {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 30px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: linear-gradient(135deg, rgba(230, 57, 70, 0.15), rgba(10, 10, 14, 0.8));
+    backdrop-filter: blur(6px);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.Hero-header:hover {
+    border-color: var(--red);
+    box-shadow: 0 0 25px var(--red-soft);
+}
+
+.Hero-header h1 {
+    color: var(--red);
+    font-size: 4rem !important;
+    text-shadow: 0 0 25px rgba(230, 57, 70, 0.4);
+    transition: text-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.Hero-header:hover h1 {
+    text-shadow: 0 0 40px rgba(230, 57, 70, 0.8);
+    transform: scale(1.02);
+}
+
+.Hero-header p {
+    color: var(--text-muted);
+    font-size: small;
+}
+
+/* ---------- Text area ---------- */
+div[data-baseweb="textarea"] {
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background-color: var(--card);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+div[data-baseweb="textarea"]:hover {
+    border-color: var(--red);
+}
+
+div[data-baseweb="textarea"]:focus-within {
+    border-color: var(--red);
+    box-shadow: 0 0 0 3px var(--red-soft);
+}
+
+div[data-testid="stTextArea"] textarea {
+    background-color: transparent;
+    color: white;
+}
+
+/* ---------- Button ---------- */
+div[data-testid="stColumn"] div[data-testid="stVerticalBlock"] {
+    align-items: flex-end;
+}
+
+div[data-testid="stColumn"] div[data-testid="stVerticalBlock"] button {
+    width: 8rem;
+    height: 3rem;
+    background-color: var(--red);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+div[data-testid="stColumn"] div[data-testid="stVerticalBlock"] button:hover {
+    background-color: var(--red-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(230, 57, 70, 0.4);
+}
+
+div[data-testid="stColumn"] div[data-testid="stVerticalBlock"] button:active {
+    transform: translateY(0);
+}
+
+/* ---------- Answer section ---------- */
+.answer-header {
+    width: 100%;
+    padding: 5px 15px;
+    margin: 20px 0;
+    border-left: 4px solid var(--red);
+    border-radius: 6px;
+    background-color: var(--card);
+    transition: border-left-width 0.2s ease, background-color 0.2s ease;
+}
+
+.answer-header:hover {
+    border-left-width: 10px;
+    background-color: rgba(230, 57, 70, 0.12);
+}
+
+.st-key-answer-container div[data-testid="stMarkdownContainer"] {
+    background-color: var(--card);
+    padding: 15px;
+    margin: 5px 0;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.st-key-answer-container div[data-testid="stMarkdownContainer"]:hover {
+    border-color: var(--red);
+    box-shadow: 0 0 20px var(--red-soft);
+}
+
+/* ---------- Source expanders ---------- */
+.st-key-source-container details {
+    background-color: var(--card);
+    padding: 5px 10px;
+    margin: 8px 0;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.st-key-source-container details:hover {
+    border-color: var(--red);
+    transform: translateX(4px);
+    box-shadow: 0 4px 16px var(--red-soft);
+}
+
+.st-key-source-container summary {
+    transition: color 0.2s ease;
+}
+
+.st-key-source-container summary:hover {
+    color: var(--red);
+}
+
+/* ---------- Links ---------- */
+a {
+    color: var(--red) !important;
+    transition: opacity 0.2s ease;
+}
+
+a:hover {
+    opacity: 0.7;
+}

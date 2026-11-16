@@ -1,0 +1,40 @@
+# Environment and secrets
+.env
+.env.*
+!.env.example
+
+# Python virtual environments
+debug/
+venv/
+.venv/
+env/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# database
+chroma_db_test/
+chroma_db
+
+# Generated datasets and caches
+data/
+chunks_cache.json
+chunks_samples.txt
+
+# Temporary test and retrieval outputs
+check.py
+test.py
+generation_results_*.txt
+!generation_results_20261116_233052.txt
+retrieval_results_*.txt
+test_results/
+
+# Local development and IDE files
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
